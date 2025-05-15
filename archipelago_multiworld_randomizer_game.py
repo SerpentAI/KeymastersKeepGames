@@ -4,7 +4,7 @@ from typing import List
 
 from dataclasses import dataclass
 
-from Options import OptionList, OptionSet
+from Options import DefaultOnToggle, OptionList, OptionSet
 
 from ..game import Game
 from ..game_objective_template import GameObjectiveTemplate
@@ -16,6 +16,7 @@ from ..enums import KeymastersKeepGamePlatforms
 class ArchipelagoMultiworldRandomizerArchipelagoOptions:
     archipelago_multiworld_randomizer_game_selection: ArchipelagoMultiworldRandomizerGameSelection
     archipelago_multiworld_randomizer_objective_types: ArchipelagoMultiworldRandomizerObjectiveTypes
+    archipelago_multiworld_randomizer_bingo_release_always_off: ArchipelagoMultiworldRandomizerBingoReleaseAlwaysOff
 
 
 class ArchipelagoMultiworldRandomizerGame(Game):
@@ -75,12 +76,17 @@ class ArchipelagoMultiworldRandomizerGame(Game):
             ])
 
         if self.include_small_multiworld_randomizer_with_apbingo_objectives:
+            objective_label: str = (
+                "[Hints: HINT_COST%  Release: RELEASE] Get COUNT bingo(s) on a SIZExSIZE APBingo board in a multiworld "
+                "randomizer with GAMES"
+            )
+
+            if self.apbingo_release_always_off:
+                objective_label = objective_label.replace("Release: RELEASE", "Release: Off")
+
             game_objective_templates.extend([
                 GameObjectiveTemplate(
-                    label=(
-                        "[Hints: HINT_COST%  Release: RELEASE] Complete a multiworld randomizer with GAMES and get "
-                        "COUNT bingo(s) on a SIZExSIZE APBingo board"
-                    ),
+                    label=objective_label,
                     data={
                         "HINT_COST": (self.hint_costs, 1),
                         "RELEASE": (self.release, 1),
@@ -93,10 +99,7 @@ class ArchipelagoMultiworldRandomizerGame(Game):
                     weight=2,
                 ),
                 GameObjectiveTemplate(
-                    label=(
-                        "[Hints: HINT_COST%  Release: RELEASE] Complete a multiworld randomizer with GAMES and get "
-                        "COUNT bingo(s) on a SIZExSIZE APBingo board"
-                    ),
+                    label=objective_label,
                     data={
                         "HINT_COST": (self.hint_costs, 1),
                         "RELEASE": (self.release, 1),
@@ -111,14 +114,20 @@ class ArchipelagoMultiworldRandomizerGame(Game):
             ])
 
         if self.include_apbingo_blackout_objectives:
+            objective_label: str = (
+                "[Hints: HINT_COST%  Release: RELEASE] Blackout a SIZExSIZE APBingo board in a multiworld "
+                "randomizer with GAMES"
+            )
+
+            if self.apbingo_release_always_off:
+                objective_label = objective_label.replace("Release: RELEASE", "Release: Off")
+
             game_objective_templates.extend([
                 GameObjectiveTemplate(
-                    label=(
-                        "[Hints: HINT_COST%  Release: Off] Blackout a SIZExSIZE APBingo board in a multiworld "
-                        "randomizer with GAMES"
-                    ),
+                    label=objective_label,
                     data={
                         "HINT_COST": (self.hint_costs, 1),
+                        "RELEASE": (self.release, 1),
                         "GAMES": (self.games, 2),
                         "SIZE": (self.bingo_board_sizes, 1)
                     },
@@ -127,12 +136,10 @@ class ArchipelagoMultiworldRandomizerGame(Game):
                     weight=1,
                 ),
                 GameObjectiveTemplate(
-                    label=(
-                        "[Hints: HINT_COST%  Release: Off] Blackout a SIZExSIZE APBingo board in a multiworld "
-                        "randomizer with GAMES"
-                    ),
+                    label=objective_label,
                     data={
                         "HINT_COST": (self.hint_costs, 1),
+                        "RELEASE": (self.release, 1),
                         "GAMES": (self.games, 3),
                         "SIZE": (self.bingo_board_sizes, 1)
                     },
@@ -163,6 +170,10 @@ class ArchipelagoMultiworldRandomizerGame(Game):
     @property
     def include_apbingo_blackout_objectives(self) -> bool:
         return "APBingo Blackout" in self.objective_types
+
+    @property
+    def apbingo_release_always_off(self) -> bool:
+        return self.archipelago_options.archipelago_multiworld_randomizer_bingo_release_always_off.value
 
     @staticmethod
     def hint_costs() -> List[int]:
@@ -292,3 +303,11 @@ class ArchipelagoMultiworldRandomizerObjectiveTypes(OptionSet):
     ]
 
     default = valid_keys
+
+
+class ArchipelagoMultiworldRandomizerBingoReleaseAlwaysOff(DefaultOnToggle):
+    """
+    Indicates whether to force the release parameter to always be "Off" for APBingo objectives.
+    """
+
+    display_name = "Archipelago Multiworld Randomizer Bingo Release Always Off"
