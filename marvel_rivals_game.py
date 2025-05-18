@@ -31,9 +31,9 @@ class MarvelRivalsGame(Game):
     def optional_game_constraint_templates(self) -> List[GameObjectiveTemplate]:
         return [
             GameObjectiveTemplate(
-                label="Perform at least 1 of the following Team-Up Abilities: ABILITIES",
+                label="Activate at least 1 of the following Team-Ups : TEAMUPS",
                 data={
-                    "ABILITIES": (self.team_up_abilities, 3),
+                    "TEAMUPS": (self.team_ups, 3),
                 },
             ),
         ]
@@ -117,7 +117,7 @@ class MarvelRivalsGame(Game):
         ]
 
     @staticmethod
-    def team_up_abilities() -> List[str]:
+    def team_ups() -> List[str]:
         return [
             "Allied Agents",
             "Ammo Overload",
