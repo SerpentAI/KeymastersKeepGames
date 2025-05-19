@@ -178,6 +178,7 @@ class TrackmaniaCampaignsOwned(OptionSet):
         "Summer 2024",
         "Fall 2024",
         "Winter 2025",
+        "Spring 2025",
     ]
 
     default = valid_keys
