@@ -139,7 +139,7 @@ class HallsOfTormentGame(Game):
             GameObjectiveTemplate(
                 label="Survive X minutes in HALL with CHARACTER. Start on Agony AGONY",
                 data={
-                    "X": (self.minute_range, 1),
+                    "X": (self.minute_range_agony, 1),
                     "HALL": (self.halls_no_vault, 1),
                     "CHARACTER": (self.characters, 1),
                     "AGONY": (self.agony_range, 1),
@@ -153,7 +153,7 @@ class HallsOfTormentGame(Game):
                 data={
                     "HALL": (self.halls_no_vault, 1),
                     "CHARACTER": (self.characters, 1),
-                    "AGONY": (self.agony_range, 1),
+                    "AGONY": (self.agony_range_low, 1),
                 },
                 is_time_consuming=False,
                 is_difficult=True,
@@ -254,7 +254,11 @@ class HallsOfTormentGame(Game):
 
     @staticmethod
     def minute_range() -> range:
-        return range(10, 26)
+        return range(10, 20)
+    
+    @staticmethod
+    def minute_range_agony() -> range:
+        return range(5, 13)
 
     @staticmethod
     def halls() -> List[str]:
@@ -337,6 +341,11 @@ class HallsOfTormentGame(Game):
     @staticmethod
     def agony_range() -> range:
         return range(1, 13)
+    
+    @staticmethod
+    def agony_range_low() -> range:
+        return range(1, 6)
+
 
 
 # Archipelago Options
